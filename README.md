@@ -1,7 +1,6 @@
 # ESP Home Pool Temperature 🌡️
 ESPHome configuration to create a pool temperature sensor which reports via MQTT and HASSIO
 
-<!-- PROJECT SHIELDS -->🌡️
 ![Maintenance](https://img.shields.io/maintenance/yes/2023)
 ![GitHub](https://img.shields.io/github/license/virtuallytd/esphome-pooltemp)
 ![GitHub forks](https://img.shields.io/github/forks/virtuallytd/esphome-pooltemp?style=social)
