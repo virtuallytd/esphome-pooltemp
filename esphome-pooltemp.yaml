@@ -1,0 +1,121 @@
+---
+# Pool Temp
+#
+# Read your pool water temperature
+# © Tony Davus
+
+# Substitutions for easy configuration
+substitutions:
+  device_name: esphome-pooltemp
+  friendly_name: esphome-pooltemp
+  project_version: "2.0"
+  device_description: "Measure your pool water temperature"
+  device_ip: 192.168.1.10
+  device_gw: 192.168.1.1
+  device_subnet: 255.255.255.0
+  device_dns1: 192.168.1.1
+  sensor_id: 0x12345678
+
+# ESPHome core configuration
+esphome:
+  name: '${device_name}'
+  comment: '${device_description}'
+  project:
+    name: "virtuallytd.esphome-pooltemp"
+    version: "${project_version}"
+  # Choose the right Platform
+  # esp32: https://esphome.io/components/esp32.html
+  # esp8266: https://esphome.io/components/esp8266.html
+  platform: esp8266
+  board: nodemcu
+  on_boot:
+    then:
+      # Executes the deep sleep consideration script at boot
+      - script.execute: consider_deep_sleep
+
+dashboard_import:
+  package_import_url: github://virtuallytd/esphome-pooltemp/esphome-pooltemp.yaml
+
+# Wi-Fi connection configuration
+wifi:
+  power_save_mode: LIGHT
+  fast_connect: true
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+  manual_ip:
+    static_ip: '${device_ip}'
+    gateway: '${device_gw}'
+    subnet: '${device_subnet}'
+    dns1: '${device_dns1}'
+
+# ESPHome API configuration
+api:
+
+# Over-the-air updates configuration
+ota:
+  password: !secret ota_password
+
+# Web server configuration
+web_server:
+  port: 80
+  auth:
+    username: !secret web_username
+    password: !secret web_password
+
+# MQTT configuration
+mqtt:
+  broker: !secret mqtt_broker
+  discovery: false
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  id: esphome_pool
+
+# Dallas temperature sensor configuration
+dallas:
+  - pin: GPIO2
+
+sensor:
+  - platform: dallas
+    # Address of the Dallas temperature sensor
+    address: '${sensor_id}' 
+    name: "Temperature"
+  - platform: adc
+    pin: VCC
+    name: "VCC Voltage"
+
+# Logger configuration
+logger:
+
+# Home Assistant time platform
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+# Deep sleep configuration
+deep_sleep:
+  id: deep_sleep_1
+  sleep_duration: 60min
+
+# Binary sensor linked to a Home Assistant entity
+binary_sensor:
+  - platform: homeassistant
+    id: prevent_deep_sleep
+    entity_id: input_boolean.prevent_deep_sleep
+
+# Script to decide whether to enter deep sleep
+script:
+  - id: consider_deep_sleep
+    mode: queued
+    then:
+      - delay: 20s
+      - if:
+          condition:
+            binary_sensor.is_on: prevent_deep_sleep
+          then:
+            - logger.log: 'Skipping sleep, per prevent_deep_sleep'
+          else:
+            - logger.log: 'Entering deep sleep'
+            - deep_sleep.enter: deep_sleep_1
+      - script.execute: consider_deep_sleep
