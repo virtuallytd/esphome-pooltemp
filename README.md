@@ -1,4 +1,4 @@
-# ESP Home Pool Temperature 🌡️
+# ESPHome Pool Temperature 🌡️
 ESPHome configuration to create a pool temperature sensor which reports via MQTT and HASSIO
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2023)
@@ -8,8 +8,6 @@ ESPHome configuration to create a pool temperature sensor which reports via MQTT
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/virtuallytd/esphome-pooltemp)
 ![GitHub last commit](https://img.shields.io/github/last-commit/virtuallytd/esphome-pooltemp)
 ![GitHub contributors](https://img.shields.io/github/contributors/virtuallytd/esphome-pooltemp)
-
-ESPHome Pool Temperature Monitoring Project
 
 The "ESPHome Pool Temperature Monitoring" project aims to provide a solution to track and monitor pool temperature using the ESPHome platform and a Dallas temperature sensor all powered by battery. It integrates with your Home Assistant system, allowing you to view and interact with the data collected from your pool.
 
